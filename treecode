@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hierarchical Tree Formation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tree-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tree-node {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #fff;
+      transition: background-color 0.3s ease;
+    }
+
+    .child-node {
+      margin-left: 20px;
+    }
+
+    .selected {
+      background-color: #cfd8dc;
+    }
+
+    button {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <label for="node-type">Node Type:</label>
+  <select id="node-type">
+    <option value="single">Single Node</option>
+    <option value="child">Child Node</option>
+    <option value="parent">Parent Node</option>
+  </select>
+  <button onclick="addNode()">Add Node</button>
+  <button onclick="updateNode()">Update Node</button>
+  <button onclick="deleteNode()">Delete Node</button>
+</div>
+
+<div class="tree-container">
+  <!-- Tree nodes will be displayed here -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  function addNode() {
+    var nodeType = $('#node-type').val();
+    var selectedNode = $('.tree-node.selected');
+
+    if (nodeType === 'single' || selectedNode.length === 0) {
+      // Add a single node or if no node is selected
+      addSingleNode();
+    } else if (nodeType === 'child') {
+      // Add a child node to the selected node
+      addChildNode(selectedNode);
+    } else if (nodeType === 'parent') {
+      // Add a parent node to the selected node
+      addParentNode(selectedNode);
+    }
+  }
+
+  function addSingleNode() {
+    var newNode = createNode('Single Node');
+    $('.tree-container').append(newNode);
+  }
+
+  function addChildNode(parentNode) {
+    var newNode = createNode('Child Node');
+    parentNode.after(newNode);
+    newNode.addClass('child-node');
+  }
+
+  function addParentNode(selectedNode) {
+    var newNode = createNode('Parent Node');
+    selectedNode.before(newNode);
+  }
+
+  function updateNode() {
+    var selectedNode = $('.tree-node.selected');
+    if (selectedNode.length > 0) {
+      var newNodeText = prompt('Enter new text for the node:', selectedNode.text());
+      if (newNodeText !== null) {
+        selectedNode.text(newNodeText);
+      }
+    } else {
+      alert('Please select a node to update.');
+    }
+  }
+
+  function deleteNode() {
+    var selectedNode = $('.tree-node.selected');
+    if (selectedNode.length > 0) {
+      selectedNode.remove();
+    } else {
+      alert('Please select a node to delete.');
+    }
+  }
+
+  function createNode(nodeText) {
+    var node = $('<div>', {
+      class: 'tree-node',
+      text: nodeText
+    });
+
+    // Add click event to select/deselect the node
+    node.click(function () {
+      if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+      } else {
+        $('.tree-node').removeClass('selected');
+        $(this).addClass('selected');
+      }
+    });
+
+    return node;
+  }
+</script>
+
+</body>
+</html>
